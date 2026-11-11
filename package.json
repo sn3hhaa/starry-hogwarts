@@ -1,0 +1,27 @@
+{
+  "name": "starry-hogwarts",
+  "version": "1.0.0",
+  "description": "Starry Hogwarts — a two-minute Van Gogh-inspired motion story, painted stroke by stroke in WebGL. Unofficial, non-commercial fan experiment.",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "stills": "node scripts/render.mjs --stills",
+    "sheet": "node scripts/render.mjs --sheet",
+    "render": "node scripts/render.mjs --video",
+    "render:preview": "node scripts/render.mjs --video --scale 0.5 --out renders/preview.mp4",
+    "voices:setup": "node scripts/audio/setup-voices.mjs",
+    "audio": "node scripts/audio/build-audio.mjs",
+    "export": "node scripts/export.mjs",
+    "film": "npm run audio && npm run render && npm run export",
+    "social": "node scripts/social.mjs",
+    "dub:kit": "node scripts/dubbing/build-kit.mjs",
+    "dub:import": "node scripts/dubbing/import-dub.mjs",
+    "dub:compare": "node scripts/dubbing/compare.mjs",
+    "test": "node --test tests/"
+  }
+}

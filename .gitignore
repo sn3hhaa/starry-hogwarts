@@ -1,0 +1,23 @@
+# dependencies / tools
+node_modules/
+tools/
+
+# generated renders and exports (rebuild with `npm run film`)
+renders/
+exports/
+audio/build/
+dubbing/returns/
+dubbing/build/
+
+# local environment
+.env
+.env.*
+*.local
+.DS_Store
+Thumbs.db
+.vscode/
+.claude/
+
+# scratch
+*.tmp
+*.log

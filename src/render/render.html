@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Starry Hogwarts — offline renderer</title>
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+const post = (p, body) => fetch(p, { method: 'POST', body });
+window.addEventListener('error', (e) => post('/__error', `${e.message} @ ${e.filename}:${e.lineno}`));
+window.addEventListener('unhandledrejection', (e) => post('/__error', String(e.reason && e.reason.stack || e.reason)));
+
+const q = new URLSearchParams(location.search);
+const mode = q.get('mode'), W = +q.get('w'), H = +q.get('h'), fps = +q.get('fps');
+
+const { createFilm } = await import('/src/film/index.js');
+const { Renderer, loadShaders } = await import('/src/engine/renderer.js');
+const { Stage } = await import('/src/engine/stage.js');
+
+const canvas = document.getElementById('c');
+const R = new Renderer(canvas, W, H, await loadShaders());
+const S = new Stage();
+const film = await createFilm();
+await post('/__log', `GPU: ${R.gpu} | float height: ${R.float}`);
+
+if (mode === 'video') {
+  const from = +q.get('from'), to = +q.get('to');
+  const n = Math.round((to - from) * fps);
+  const px = new Uint8Array(W * H * 4);
+  let maxStrokes = 0;
+  for (let i = 0; i < n; i++) {
+    const T = from + i / fps;
+    R.render(S, film.frame(S, T));
+    if (S.n > maxStrokes) maxStrokes = S.n;
+    R.readPixels(px);
+    await post('/__frame', px);
+  }
+  await post('/__log', `peak strokes per frame: ${maxStrokes}`);
+} else {
+  const times = q.get('times').split(',').map(Number);
+  for (let i = 0; i < times.length; i++) {
+    const t0 = performance.now();
+    R.render(S, film.frame(S, times[i]));
+    R.gl.finish();
+    const ms = performance.now() - t0;
+    const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
+    const name = mode === 'sheet' ? 'f' + String(i).padStart(4, '0') : 't' + times[i].toFixed(2).padStart(6, '0');
+    await post('/__frame?name=' + name, blob);
+    await post('/__log', `t=${times[i]}  strokes=${S.n}  ${ms.toFixed(0)}ms`);
+  }
+}
+await post('/__done', '');
+</script>
+</body>
+</html>
