@@ -80,7 +80,7 @@ const handlers = {
 
 const port = 5200 + Math.floor(Math.random() * 400);
 const server = await startServer({ port, handlers, quiet: true });
-const q = new URLSearchParams({ mode, w: String(W), h: String(H), fps: String(fps), from: String(from), to: String(to), times: times.join(',') });
+const q = new URLSearchParams({ mode, w: String(W), h: String(H), fps: String(fps), from: String(from), to: String(to), times: times.join(','), film: opt('film', 'film') });
 const url = `http://127.0.0.1:${port}/src/render/render.html?${q}`;
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'starry-chrome-'));
 const chrome = spawn(findChrome(), [

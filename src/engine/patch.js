@@ -84,7 +84,7 @@ export function fill(shape, o = {}) {
 function fillInto(B, shape, o) {
   const rng = RNG(o.seed ?? 7);
   const len = o.len ?? 38, wid = o.wid ?? 11;
-  const P = palette(o.pal ?? ['#1d4aa5']);
+  const P = typeof o.pal === 'function' ? null : palette(o.pal ?? ['#1d4aa5']);
   const bb = bbox(shape);
   const flow = flowFn(o.flow ?? 0, bb);
   const jit = o.jit ?? 0.22;

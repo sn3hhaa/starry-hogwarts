@@ -22,7 +22,7 @@ const { Stage } = await import('/src/engine/stage.js');
 const canvas = document.getElementById('c');
 const R = new Renderer(canvas, W, H, await loadShaders());
 const S = new Stage();
-const film = await createFilm();
+const film = await createFilm(q.get('film') || 'film');
 await post('/__log', `GPU: ${R.gpu} | float height: ${R.float}`);
 
 if (mode === 'video') {
